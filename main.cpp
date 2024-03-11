@@ -1,4 +1,3 @@
-//???
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -8,7 +7,7 @@ struct process {
   double duration;
   double pridegree;
 };
-
+// write the result
 void display (vector<process>&process_box,vector<double>&gantt_chart_time,vector<string>&gantt_run_order,double&waitting_time) {
     cout<<0<<" ";
     for (double i=0;i<gantt_chart_time.size();i++) {
@@ -20,7 +19,8 @@ void display (vector<process>&process_box,vector<double>&gantt_chart_time,vector
 }
 
 void FCFS (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time,double&waitting_time) {
-  // O(n)
+  // time complexity : O(n)
+  // memory: O(n);
   if(process_box.size()==0) {
     return;
   }
@@ -40,7 +40,9 @@ void FCFS (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
   display (process_box,gantt_chart_time,gantt_run_order,waitting_time);
   gantt_chart_time.clear();
   gantt_run_order.clear();
+  waitting_time=0;
 }
+//custom comparator for priority queue
 class shorter {
   public:
     bool operator () (process&a,process&b) {
@@ -55,6 +57,8 @@ class shorter {
 };
 //non-preemptive
 void SJF1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time,double&waitting_time) { 
+  //time complexity :O(n^2*log(n))
+  //Memory: O(n)
   if(process_box.size()==0) {
     return;
   }
@@ -76,6 +80,7 @@ void SJF1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
     gantt_run_order.push_back(imple.process_name);
     now+=imple.duration;
     gantt_chart_time.push_back(now);
+    waitting_time+=(now-process_box[i].arrival_time);
     if(i<n) {
       while(i<n&&process_box[i].arrival_time<=now) {
         pq.push(process_box[i]);
