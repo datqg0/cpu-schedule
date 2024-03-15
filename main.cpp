@@ -14,6 +14,7 @@ void display (vector<process>&process_box,vector<double>&gantt_chart_time,vector
       cout<<gantt_run_order[i]<<" "<<gantt_chart_time[i]<<" ";
     }
     cout<<endl;
+    cout<<"thoi gian cho "<<waitting_time<<endl;
     cout<<"thoi gian cho trung binh la : "<<waitting_time/(double)(process_box.size());
     cout<<endl<<endl;
 }
@@ -55,10 +56,23 @@ class shorter {
         return false;
     }
 };
+class pricomp {
+  public:
+    bool operator () (process&a,process&b) {
+        if(a.pridegree>b.pridegree) {
+          return true;
+        }
+        if(a.duration==b.duration) {
+          return a.arrival_time>b.arrival_time;
+        }
+        return false;
+    }
+  };
 //non-preemptive
 void SJF1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time,double&waitting_time) { 
   //time complexity :O(n^2*log(n))
   //Memory: O(n)
+  //when arrivel time is big
   if(process_box.size()==0) {
     return;
   }
@@ -74,13 +88,22 @@ void SJF1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
     pq.push(process_box[i]);
     i++;
   }
-  while(pq.empty()==false) {
+  while(pq.empty()==false||i<n) {
     process imple = pq.top();
+    if(pq.empty()==true) {
+      now=process_box[i].arrival_time;
+    }
+    if(imple.arrival_time>now) {
+      now=imple.arrival_time;
+      gantt_chart_time.push_back(now);
+      gantt_run_order.push_back("N");
+    }
     pq.pop();
+    double take=now;
     gantt_run_order.push_back(imple.process_name);
     now+=imple.duration;
     gantt_chart_time.push_back(now);
-    waitting_time+=(now-process_box[i].arrival_time);
+    waitting_time+=(take-imple.arrival_time);
     if(i<n) {
       while(i<n&&process_box[i].arrival_time<=now) {
         pq.push(process_box[i]);
@@ -91,13 +114,50 @@ void SJF1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
   display (process_box,gantt_chart_time,gantt_run_order,waitting_time);
   gantt_chart_time.clear();
   gantt_run_order.clear();
+  waitting_time=0;
 }
 //preemptive
 void SJF2 (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time,double&waitting_time) { 
   if(process_box.size()==0) {
     return;
   }
-
+  int n=process_box.size();
+  int i=1;
+  int now=0;
+  priority_queue<process,vector<process>,shorter> pq;
+  pq.push(process_box[0]);
+  now=process_box[0].arrival_time;
+  while(i<n&&process_box[i].arrival_time<=now) {
+    pq.push(process_box[i]);
+    i++;
+  }
+  while(pq.empty()==false||i<n) {
+    process imple = pq.top();
+    if(pq.empty()==true) {
+      now=process_box[i].arrival_time;
+    }
+    if(imple.arrival_time>now) {
+      now=imple.arrival_time;
+      gantt_chart_time.push_back(now);
+      gantt_run_order.push_back("N");
+    }
+    pq.pop();
+    double take=now;
+    gantt_run_order.push_back(imple.process_name);
+    now+=imple.duration;
+    gantt_chart_time.push_back(now);
+    waitting_time+=(take-imple.arrival_time);
+    if(i<n) {
+      while(i<n&&process_box[i].arrival_time<=now) {
+        pq.push(process_box[i]);
+        i++;
+      }
+    }
+  }
+  display (process_box,gantt_chart_time,gantt_run_order,waitting_time);
+  gantt_chart_time.clear();
+  gantt_run_order.clear();
+  waitting_time=0;
 }
 void PRI1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time,double&waitting_time) { 
   if(process_box.size()==0) {
@@ -111,11 +171,60 @@ void PRI2 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
   }
 
 }
-void RR (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time,double&waitting_time) { 
+void RR (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time,double&waitting_time,double qt) { 
+  //cout<<"run"<<endl;
   if(process_box.size()==0) {
+    //cout<<"run"<<endl;
     return;
   }
+  //cout<<"ok"<<endl;
+	queue<process> q;
+	double now=0;
+	int i=0;
+	double n=process_box.size();
+	while(process_box[i].arrival_time<=now&&i<n) {
+		q.push(process_box[i]);
+		i++;
+	}
+  //cout<<"ok"<<endl;
+	while(i<n||q.empty()==false) {
+    if(q.empty()==true) {
+      now=process_box[i].arrival_time;
+    }
+		process temp=q.front();
+		if(temp.arrival_time>now) {
+			now=temp.arrival_time;
+			gantt_chart_time.push_back(now);
+    	gantt_run_order.push_back("N");
+		}
+		q.pop();
+    double take=now;
+		double runtime =min(qt,temp.duration);
+		now += runtime;
+		gantt_chart_time.push_back(now);
+    gantt_run_order.push_back(temp.process_name);
+    waitting_time+=(take-temp.arrival_time);
 
+    while(i<n) {
+    		if(process_box[i].arrival_time<=now) {
+    			q.push(process_box[i]);
+    			i++;
+			}
+			else {
+				break;
+			}
+		}
+		temp.duration-= runtime;
+    	temp.arrival_time=now;
+    	if(temp.duration>0) {
+    		q.push(temp);
+		}
+	}
+  //cout<<"ok"<<endl;
+  display (process_box,gantt_chart_time,gantt_run_order,waitting_time);
+  gantt_chart_time.clear();
+  gantt_run_order.clear();
+  waitting_time=0;
 }
 int main() {
   freopen("input.txt", "r", stdin);
@@ -136,4 +245,6 @@ int main() {
   }
   FCFS(process_box,gantt_run_order,gantt_chart_time,waitting_time);
   SJF1(process_box,gantt_run_order,gantt_chart_time,waitting_time);
+  double qt=2;
+  RR (process_box,gantt_run_order,gantt_chart_time,waitting_time,qt);
 }
