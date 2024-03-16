@@ -1,6 +1,6 @@
 # cpu-schedule 
 ## FCFS ✅
-## SJF
+## SJF  ✅
 ## SJRF (the non-preemptive version of SJF)
 ## Priority schedule
 ## RR✅
