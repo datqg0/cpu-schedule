@@ -6,7 +6,7 @@ struct process {
   double arrival_time;
   double duration;
 };
-// write the result (must to update final)
+// write the result (must update final)
 void display (vector<process>&process_box,vector<double>&gantt_chart_time,vector<string>&gantt_run_order,double&waitting_time) {
     cout<<0<<" ";
     for (double i=0;i<gantt_chart_time.size();i++) {
