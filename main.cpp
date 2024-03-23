@@ -17,7 +17,6 @@ void display (vector<process>&process_box,vector<double>&gantt_chart_time,vector
     cout<<"thoi gian cho trung binh la : "<<waitting_time/(double)(process_box.size());
     cout<<endl<<endl;
 }
-
 void FCFS (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time,double&waitting_time) {
   // time complexity : O(n)
   // memory: O(n);
@@ -60,9 +59,9 @@ void SJF1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
   if(process_box.size()==0) {
     return;
   }
-  int n=process_box.size();
-  int i=1;
-  int now=0;
+  double n=process_box.size();
+  double i=1;
+  double now=0;
   priority_queue<process,vector<process>,shorter> pq;
   pq.push(process_box[0]);
   now=process_box[0].arrival_time;
@@ -103,9 +102,9 @@ void SJF2 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
   if(process_box.size()==0) {
     return;
   }
-  int n=process_box.size();
-  int i=1;
-  int now=0;
+  double n=process_box.size();
+  double i=1;
+  double now=0;
   priority_queue<process,vector<process>,shorter> pq;
   pq.push(process_box[0]);
   now=process_box[0].arrival_time;
@@ -133,9 +132,9 @@ void SJF2 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
         current=temp;
       }
     }
-    int take=now;
+    double take=now;
     if(i<n) {
-      int av_time=process_box[i].arrival_time-now;
+      double av_time=process_box[i].arrival_time-now;
       if(av_time>=current.duration) {
         if(gantt_run_order.size()==0||gantt_run_order[gantt_run_order.size()-1]!=current.process_name) {
           gantt_run_order.push_back(current.process_name);
@@ -197,7 +196,7 @@ void RR (vector<process>&process_box,vector<string>&gantt_run_order,vector<doubl
   }
   queue<process> q;
   double now=0;
-  int i=0;
+  double i=0;
   double n=process_box.size();
   while(process_box[i].arrival_time<=now&&i<n) {
     q.push(process_box[i]);
@@ -259,8 +258,8 @@ int main() {
     process_box.push_back(temp);
   }
   FCFS(process_box,gantt_run_order,gantt_chart_time,waitting_time);
-  //SJF1(process_box,gantt_run_order,gantt_chart_time,waitting_time);
-  //double qt=2;
-  //RR (process_box,gantt_run_order,gantt_chart_time,waitting_time,qt);
+  SJF1(process_box,gantt_run_order,gantt_chart_time,waitting_time);
+  double qt=2;
+  RR (process_box,gantt_run_order,gantt_chart_time,waitting_time,qt);
   SJF2(process_box,gantt_run_order,gantt_chart_time,waitting_time); 
 }
