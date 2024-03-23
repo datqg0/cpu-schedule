@@ -71,21 +71,21 @@ void SJF1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
     i++;
   }
   while(pq.empty()==false||i<n) {
-    process imple = pq.top();
+    process current = pq.top();
     if(pq.empty()==true) {
       now=process_box[i].arrival_time;
     }
-    if(imple.arrival_time>now) {
-      now=imple.arrival_time;
+    if(current.arrival_time>now) {
+      now=current.arrival_time;
       gantt_chart_time.push_back(now);
       gantt_run_order.push_back("N");
     }
     pq.pop();
     double take=now;
-    gantt_run_order.push_back(imple.process_name);
-    now+=imple.duration;
+    gantt_run_order.push_back(current.process_name);
+    now+=current.duration;
     gantt_chart_time.push_back(now);
-    waitting_time+=(take-imple.arrival_time);
+    waitting_time+=(take-current.arrival_time);
     if(i<n) {
       while(i<n&&process_box[i].arrival_time<=now) {
         pq.push(process_box[i]);
@@ -113,44 +113,78 @@ void SJF2 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
     pq.push(process_box[i]);
     i++;
   }
+  process current;
+  current.arrival_time=-1;
   while(pq.empty()==false||i<n) {
-    process imple = pq.top();
-    if(pq.empty()==true) {
-      now=process_box[i].arrival_time;
-    }
-    if(imple.arrival_time>now) {
-      now=imple.arrival_time;
-      gantt_chart_time.push_back(now);
-      gantt_run_order.push_back("N");
-    }
-    pq.pop();
-    double take=now;
-    if(i<n) {
-      int av_time=process_box[i].arrival_time-now;
-      if(av_time>=imple.duration) {
-        gantt_run_order.push_back(imple.process_name);
-        now+=imple.duration;
-        gantt_chart_time.push_back(now);
-      }
-      else {
-        now+=av_time;
-        gantt_run_order.push_back(imple.process_name);
-        gantt_chart_time.push_back(now);
-        imple.duration-=av_time;
-        imple.arrival_time=now;
-        pq.push(imple);
+    if(current.arrival_time==-1) {
+      current=pq.top();
+      pq.pop();
+      if(now<current.arrival_time) {
+        gantt_chart_time.push_back(current.arrival_time);
+        gantt_run_order.push_back("N");
+        now=current.arrival_time;
       }
     }
     else {
-      gantt_run_order.push_back(imple.process_name);
-      now+=imple.duration;
-      gantt_chart_time.push_back(now);
+      if(current.duration>pq.top().duration) {
+        process temp = pq.top();
+        pq.pop();
+        pq.push(current);
+        current=temp;
+      }
+    }
+    int take=now;
+    if(i<n) {
+      int av_time=process_box[i].arrival_time-now;
+      if(av_time>=current.duration) {
+        if(gantt_run_order.size()==0||gantt_run_order[gantt_run_order.size()-1]!=current.process_name) {
+          gantt_run_order.push_back(current.process_name);
+          now+=current.duration;
+          gantt_chart_time.push_back(now);
+          waitting_time+=(take-current.arrival_time);
+          current.arrival_time=-1;
+        }
+        else {
+          now+=current.duration;
+          gantt_chart_time[gantt_chart_time.size()-1]=now;
+          current.arrival_time=-1;
+        }
+      }
+      else {
+        if(gantt_run_order.size()==0||gantt_run_order[gantt_run_order.size()-1]!=current.process_name) {
+          now+=av_time;
+          gantt_run_order.push_back(current.process_name);
+          gantt_chart_time.push_back(now);
+          current.duration-=av_time;
+          waitting_time+=(take-current.arrival_time);
+          current.arrival_time=now; 
+        }
+        else {
+          now+=av_time;
+          gantt_chart_time[gantt_chart_time.size()-1]=now;
+          current.duration-=av_time;
+          current.arrival_time=now; 
+        }
+      }
+    }
+    else {
+      if(gantt_run_order.size()==0||gantt_run_order[gantt_run_order.size()-1]!=current.process_name) {
+          gantt_run_order.push_back(current.process_name);
+          now+=current.duration;
+          gantt_chart_time.push_back(now);
+          waitting_time+=(take-current.arrival_time);
+          current.arrival_time=-1;    
+        }
+        else {
+          now+=current.duration;
+          gantt_chart_time[gantt_chart_time.size()-1]=now;
+          current.arrival_time=-1;
+        }
     }
     while(i<n&&process_box[i].arrival_time<=now) {
         pq.push(process_box[i]);
         i++;
     }
-    waitting_time+=(take-imple.arrival_time);
   }
   display (process_box,gantt_chart_time,gantt_run_order,waitting_time);
   gantt_chart_time.clear();
