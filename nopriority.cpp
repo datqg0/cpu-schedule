@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-
 struct process {
   string process_name;
   double arrival_time;
@@ -28,9 +27,9 @@ class shorter {
     }
 };
 void display (vector<process>&process_box,vector<double>&gantt_chart_time,vector<string>&gantt_run_order) {
-    //display gantt chart
     map<string,double> waittable;
     map<string,double> inputtime;
+    cout<<"So do gantt :"<<endl;
     for (int i=0;i<process_box.size();i++) {
       inputtime[process_box[i].process_name]=process_box[i].arrival_time;
     }
@@ -92,16 +91,17 @@ void display (vector<process>&process_box,vector<double>&gantt_chart_time,vector
           cout<<'|';
         }
     }
-    cout<<endl;
+    cout<<endl<<endl;
     for (int i=0;i<process_box.size();i++) {
       cout<<"thoi gian cho cua "<<process_box[i].process_name<<" : "<<waittable[process_box[i].process_name]<<endl;
       sum+=waittable[process_box[i].process_name];
     }
     cout<<"tong thoi gian cho "<<sum<<endl;
-    cout<<"thoi gian cho trung binh la : "<<sum/(double)(process_box.size());
-    cout<<endl<<endl;
+    cout<<"thoi gian cho trung binh la : "<<sum/(double)(process_box.size())<<endl<<endl;
 }
-void FCFS (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time) {
+void FCFS (vector<process>&process_box) {
+  vector<double>gantt_chart_time;
+  vector<string>gantt_run_order;
   if(process_box.size()==0) {
     return;
   }
@@ -118,11 +118,10 @@ void FCFS (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
     gantt_run_order.push_back(process_box[i].process_name);
   }
   display (process_box,gantt_chart_time,gantt_run_order);
-  gantt_chart_time.clear();
-  gantt_run_order.clear();
 }
-
-void SJF1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time) { 
+void SJF1 (vector<process>&process_box) { 
+  vector<double>gantt_chart_time;
+  vector<string>gantt_run_order;
   if(process_box.size()==0) {
     return;
   }
@@ -159,10 +158,10 @@ void SJF1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
     }
   }
   display (process_box,gantt_chart_time,gantt_run_order);
-  gantt_chart_time.clear();
-  gantt_run_order.clear();
 }
-void SJF2 (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time) { 
+void SJF2 (vector<process>&process_box) { 
+  vector<double>gantt_chart_time;
+  vector<string>gantt_run_order;
   if(process_box.size()==0) {
     return;
   }
@@ -247,10 +246,10 @@ void SJF2 (vector<process>&process_box,vector<string>&gantt_run_order,vector<dou
     }
   }
   display (process_box,gantt_chart_time,gantt_run_order);
-  gantt_chart_time.clear();
-  gantt_run_order.clear();
 }
-void RR (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time,double qt) { 
+void RR (vector<process>&process_box,double qt) { 
+  vector<double>gantt_chart_time;
+  vector<string>gantt_run_order;
   if(process_box.size()==0) {
     return;
   }
@@ -294,8 +293,6 @@ void RR (vector<process>&process_box,vector<string>&gantt_run_order,vector<doubl
     }
   }
   display (process_box,gantt_chart_time,gantt_run_order);
-  gantt_chart_time.clear();
-  gantt_run_order.clear();
 }
 int main() {
   freopen("input.txt", "r", stdin);
@@ -304,8 +301,6 @@ int main() {
   cin>>a>>b>>c;
   string s;
   vector<process> process_box;
-  vector<double> gantt_chart_time;
-  vector<string> gantt_run_order;
   while(cin>>s) {
     double a,b;
     cin>>a>>b;
@@ -314,12 +309,13 @@ int main() {
   }
   sort(process_box.begin(),process_box.end(),timesort());
   cout<<"Den truoc phuc vu truoc : "<<endl;
-  FCFS(process_box,gantt_run_order,gantt_chart_time);
+  FCFS(process_box);
   cout<<"Thoi gian ngan truoc doc quyen : "<<endl;
-  SJF1(process_box,gantt_run_order,gantt_chart_time);
+  SJF1(process_box);
   cout<<"Thoi gian ngan truoc khong doc quyen : "<<endl;
-  SJF2(process_box,gantt_run_order,gantt_chart_time); 
+  SJF2(process_box); 
   double qt=2;
   cout<<"Dieu phoi vong tron round robin : "<<endl;
-  RR (process_box,gantt_run_order,gantt_chart_time,qt);
+  cout<<"thoi gian luong tu :"<<qt<<endl;
+  RR (process_box,qt);
 }
