@@ -22,9 +22,9 @@ class priority {
 };
 
 void display (vector<process>&process_box,vector<double>&gantt_chart_time,vector<string>&gantt_run_order) {
-    //display gantt chart
     map<string,double> waittable;
     map<string,double> inputtime;
+    cout<<"So do gantt :"<<endl;
     for (int i=0;i<process_box.size();i++) {
       inputtime[process_box[i].process_name]=process_box[i].arrival_time;
     }
@@ -92,10 +92,11 @@ void display (vector<process>&process_box,vector<double>&gantt_chart_time,vector
       sum+=waittable[process_box[i].process_name];
     }
     cout<<"tong thoi gian cho "<<sum<<endl;
-    cout<<"thoi gian cho trung binh la : "<<sum/(double)(process_box.size());
-    cout<<endl<<endl;
+    cout<<"thoi gian cho trung binh la : "<<sum/(double)(process_box.size())<<endl<<endl;
 }
-void PS2 (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time) { 
+void PS2 (vector<process>&process_box) { 
+  vector<double>gantt_chart_time;
+  vector<string>gantt_run_order;
   if(process_box.size()==0) {
     return;
   }
@@ -180,11 +181,11 @@ void PS2 (vector<process>&process_box,vector<string>&gantt_run_order,vector<doub
     }
   }
   display (process_box,gantt_chart_time,gantt_run_order);
-  gantt_chart_time.clear();
-  gantt_run_order.clear();
 }
 
-void PS1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<double>&gantt_chart_time) { 
+void PS1 (vector<process>&process_box) { 
+  vector<double>gantt_chart_time;
+  vector<string>gantt_run_order;
   if(process_box.size()==0) {
     return;
   }
@@ -221,20 +222,15 @@ void PS1 (vector<process>&process_box,vector<string>&gantt_run_order,vector<doub
     }
   }
   display (process_box,gantt_chart_time,gantt_run_order);
-  gantt_chart_time.clear();
-  gantt_run_order.clear();
 }
 
 int main() {
   freopen("input.txt", "r", stdin);
   freopen("output.txt", "w", stdout);
-  //read some unused data
   string a,b,c,d;
   cin>>a>>b>>c>>d;
   string s;
   vector<process> process_box;
-  vector<double> gantt_chart_time;
-  vector<string> gantt_run_order;
   double waitting_time=0;
   while(cin>>s) {
     double a,b,p;
@@ -243,7 +239,7 @@ int main() {
     process_box.push_back(temp);
   }
   cout<<"Dieu phoi uu tien doc quyen :"<<endl;
-  PS1(process_box,gantt_run_order,gantt_chart_time);
-  cout<<"Dieu phoi uu tien doc quyen :"<<endl;
-  PS2(process_box,gantt_run_order,gantt_chart_time);
+  PS1(process_box);
+  cout<<"Dieu phoi uu tien khong doc quyen :"<<endl;
+  PS2(process_box);
 }
