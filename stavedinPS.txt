@@ -1,0 +1,7 @@
+ten_tien_trinh   thoi_gian_den    thoi_gian_thuc_hien	do_uu_tien
+A     					0     				10000 				0
+B     					1     				3				  1
+C     					2     				8				  4
+D     					3     				5				  3
+E     					4     				2				  2
+F     					4     				6 				5
